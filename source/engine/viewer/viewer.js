@@ -10,6 +10,43 @@ import { ViewerModel, ViewerMainModel } from './viewermodel.js';
 
 import * as THREE from 'three';
 
+import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { environments } from './environments.js';
+
+const MANAGER = new LoadingManager();
+const THREE_PATH = `https://unpkg.com/three@0.${REVISION}.x`;
+const KTX2_LOADER = new KTX2Loader(MANAGER).setTranscoderPath(
+    `${THREE_PATH}/examples/jsm/libs/basis/`,
+);
+const Preset = { ASSET_GENERATOR: 'assetgenerator' };
+
+import {
+	AmbientLight,
+	AnimationMixer,
+	AxesHelper,
+	Box3,
+	Cache,
+	Color,
+	DirectionalLight,
+	GridHelper,
+	HemisphereLight,
+	LoaderUtils,
+	LoadingManager,
+	PMREMGenerator,
+	PerspectiveCamera,
+	PointsMaterial,
+	REVISION,
+	Scene,
+	SkeletonHelper,
+	Vector3,
+	WebGLRenderer,
+	LinearToneMapping,
+	ACESFilmicToneMapping,
+} from 'three';
+
 export function GetDefaultCamera (direction)
 {
     let fieldOfView = 45.0;
@@ -157,8 +194,10 @@ export class UpVector
 
 export class Viewer
 {
-    constructor ()
+    constructor (options)
     {
+        this.options = options;
+
         THREE.ColorManagement.enabled = false;
 
         this.canvas = null;
@@ -175,6 +214,24 @@ export class Viewer
         this.settings = {
             animationSteps : 40
         };
+                this.state = {
+
+                environment:
+				options === Preset.ASSET_GENERATOR
+					? environments.find((e) => e.id === 'footprint-court').name
+					: environments[2].name, // this defines the environment used, no 2 is the Clear Sky
+
+                exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
+                wireframe: true,
+                toneMapping: LinearToneMapping,
+                }
+                /*this.renderer.toneMapping = Number(this.state.toneMapping);
+                this.renderer.toneMappingExposure = Math.pow(2, this.state.exposure);*/
+
+                const loader = new GLTFLoader(MANAGER)
+                    .setKTX2Loader(KTX2_LOADER.detectSupport(this.renderer));
+
+                 this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
     }
 
     Init (canvas)
@@ -187,8 +244,8 @@ export class Viewer
             antialias : true
         };
 
-        this.renderer = new THREE.WebGLRenderer (parameters);
-        this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+        this.renderer = new WebGLRenderer (parameters);
+        //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
         if (window.devicePixelRatio) {
             this.renderer.setPixelRatio (window.devicePixelRatio);
@@ -204,6 +261,8 @@ export class Viewer
         this.InitShading ();
 
         this.Render ();
+
+        const fov = options.preset === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
     }
 
     SetMouseClickHandler (onMouseClick)
@@ -228,12 +287,9 @@ export class Viewer
         this.Render ();
     }
 
-    SetEnvironmentMapSettings (environmentSettings)
+    SetEnvironmentMapSettings ()
     {
-        let newEnvironmentSettings = environmentSettings.Clone ();
-        this.shadingModel.SetEnvironmentMapSettings (newEnvironmentSettings, () => {
-            this.Render ();
-        });
+
         this.shadingModel.UpdateShading ();
         this.Render ();
     }
