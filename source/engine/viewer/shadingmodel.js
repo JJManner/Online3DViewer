@@ -116,10 +116,10 @@ export class ShadingModel
             //this.renderer.toneMapping = Number(this.state.toneMapping);
 		    //this.renderer.toneMappingExposure = Math.pow(2, this.state.exposure);
             this.scene.environment = this.envMap;
-            console.log('Physical');
+            //console.log('Physical');
             //console.log(this.state.exposure);
-            console.log('envmap - ', this.envMap);
-            console.log('shading type - ', ShadingType.Physical);
+            //console.log('envmap - ', this.envMap);
+            //console.log('shading type - ', ShadingType.Physical);
 
         }
         if (this.backgroundIsEnvMap && this.projectionMode === ProjectionMode.Perspective) {
@@ -157,8 +157,8 @@ export class ShadingModel
 					resolve({ envMap });
 				},
 				undefined,
-                console.log('is envmap undefined - ',  typeof envMap == 'undefined'),
-                console.log('is this environment undefined - ',  typeof this.environment == 'undefined'),
+                //console.log('is envmap undefined - ',  typeof envMap == 'undefined'),
+                //console.log('is this environment undefined - ',  typeof this.environment == 'undefined'),
                 reject,
 			);});
 

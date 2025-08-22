@@ -47,6 +47,7 @@ import {
 	ACESFilmicToneMapping,
 } from 'three';
 
+
 export function GetDefaultCamera (direction)
 {
     let fieldOfView = 45.0;
@@ -202,7 +203,8 @@ export class Viewer
 
         this.canvas = null;
         this.renderer = null;
-        this.scene = null;
+        //this.scene = null;
+        this.scene = new Scene();
         this.mainModel = null;
         this.extraModel = null;
         this.camera = null;
@@ -224,14 +226,10 @@ export class Viewer
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
                 toneMapping: LinearToneMapping,
-                }
-                /*this.renderer.toneMapping = Number(this.state.toneMapping);
-                this.renderer.toneMappingExposure = Math.pow(2, this.state.exposure);*/
+        }
 
-                const loader = new GLTFLoader(MANAGER)
-                    .setKTX2Loader(KTX2_LOADER.detectSupport(this.renderer));
 
-                 this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
+
     }
 
     Init (canvas)
@@ -244,6 +242,7 @@ export class Viewer
             antialias : true
         };
 
+        //this.renderer = window.renderer = new WebGLRenderer({ antialias: true });
         this.renderer = new WebGLRenderer (parameters);
         //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
@@ -253,17 +252,141 @@ export class Viewer
         this.renderer.setClearColor ('#ffffff', 1.0);
         this.renderer.setSize (this.canvas.width, this.canvas.height);
 
-        this.scene = new THREE.Scene ();
+        //this.scene = new THREE.Scene ();
         this.mainModel = new ViewerMainModel (this.scene);
         this.extraModel = new ViewerModel (this.scene);
 
         this.InitNavigation ();
         this.InitShading ();
 
+        this.pmremGenerator = new PMREMGenerator(this.renderer);
+		this.pmremGenerator.compileEquirectangularShader();
+
+        //const fov = Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
+        const fov = Viewer.options === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
+        this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
+
+        if (typeof myVar == 'undefined') ? console.log ('myVar is NOT DEFINED') :  console.log ('myVar is DEFINED'),
+
+
         this.Render ();
 
-        const fov = options.preset === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
+
+
     }
+
+
+
+
+	updateEnvironment() {
+		const environment = environments.filter(
+			(entry) => entry.name === this.state.environment,
+		)[0];
+
+		this.getCubeMapTexture(environment).then(({ envMap }) => {
+			this.scene.environment = envMap;
+			this.scene.backgroundRotation.y = this.state.bgRotation * (Math.PI/180);
+			this.scene.environmentRotation.y = this.state.bgRotation * (Math.PI/180);
+			// NOTE! both of these are required (scene.backgroundRotation AND scene.environmentRotation) Otherwise lighting environemnt is not correct. Instructions on this matter - https://threejs.org/docs/#api/en/scenes/Scene.environmentRotation - are a really misleading.
+			this.scene.background = this.state.background ? envMap : this.backgroundColor;
+		});
+	}
+
+    	getCubeMapTexture(environment) {
+		const { id, path } = environment;
+
+		// neutral (THREE.RoomEnvironment)
+		if (id === 'neutral') {
+			return Promise.resolve({ envMap: this.neutralEnvironment });
+		}
+
+		// none
+		if (id === '') {
+			return Promise.resolve({ envMap: null });
+		}
+
+		return new Promise((resolve, reject) => {
+			new EXRLoader().load(
+				'hansaplatz_1k_x.exr',
+				(texture) => {
+					const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
+					this.pmremGenerator.dispose();
+
+					resolve({ envMap });
+				},
+				undefined,
+				reject,
+			);
+		});
+	}
+
+    load(url, rootPath, assetMap) {
+		const baseURL = LoaderUtils.extractUrlBase(url);
+
+		// Load.
+		return new Promise((resolve, reject) => {
+			// Intercept and override relative URLs.
+			MANAGER.setURLModifier((url, path) => {
+				// URIs in a glTF file may be escaped, or not. Assume that assetMap is
+				// from an un-escaped source, and decode all URIs before lookups.
+				// See: https://github.com/donmccurdy/three-gltf-viewer/issues/146
+				const normalizedURL =
+					rootPath +
+					decodeURI(url)
+						.replace(baseURL, '')
+						.replace(/^(\.?\/)/, '');
+
+				if (assetMap.has(normalizedURL)) {
+					const blob = assetMap.get(normalizedURL);
+					const blobURL = URL.createObjectURL(blob);
+					blobURLs.push(blobURL);
+					return blobURL;
+				}
+
+				return (path || '') + url;
+			});
+
+			const loader = new GLTFLoader(MANAGER)
+				.setCrossOrigin('anonymous')
+				.setDRACOLoader(DRACO_LOADER)
+				.setKTX2Loader(KTX2_LOADER.detectSupport(this.renderer))
+				.setMeshoptDecoder(MeshoptDecoder);
+
+			const blobURLs = [];
+
+			loader.load(
+				url,
+				(gltf) => {
+					window.VIEWER.json = gltf;
+
+					const scene = gltf.scene || gltf.scenes[0];
+					const clips = gltf.animations || [];
+
+					if (!scene) {
+						// Valid, but not supported by this viewer.
+						throw new Error(
+							'This model contains no scene, and cannot be viewed here. However,' +
+								' it may contain individual 3D resources.',
+						);
+					}
+
+					this.setContent(scene, clips);
+
+					blobURLs.forEach(URL.revokeObjectURL);
+
+					// See: https://github.com/google/draco/issues/349
+					// DRACOLoader.releaseDecoderModule();
+
+					resolve(gltf);
+				},
+				undefined,
+				reject,
+			);
+		});
+	}
+
+
+
 
     SetMouseClickHandler (onMouseClick)
     {
