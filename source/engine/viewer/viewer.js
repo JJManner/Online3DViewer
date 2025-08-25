@@ -221,7 +221,7 @@ export class Viewer
                 environment:
 				options === Preset.ASSET_GENERATOR
 					? environments.find((e) => e.id === 'footprint-court').name
-					: environments[2].name, // this defines the environment used, no 2 is the Clear Sky
+					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky
 
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
@@ -266,8 +266,7 @@ export class Viewer
         const fov = Viewer.options === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
         this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
 
-        if (typeof myVar == 'undefined') ? console.log ('myVar is NOT DEFINED') :  console.log ('myVar is DEFINED'),
-
+        console.log('1. is envmap undefined = ',  typeof envMap == 'undefined'),
 
         this.Render ();
 
@@ -307,7 +306,7 @@ export class Viewer
 
 		return new Promise((resolve, reject) => {
 			new EXRLoader().load(
-				'hansaplatz_1k_x.exr',
+				path,
 				(texture) => {
 					const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
 					this.pmremGenerator.dispose();
