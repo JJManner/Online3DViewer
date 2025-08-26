@@ -30,7 +30,7 @@ export const environments = [
 	{
 		id: 'hansaplatz',
 		name: 'Hansaplatz',
-		path: '/assets/envmaps/hansaplatz_1k_x.exr',
+		path: 'assets/envmaps/hansaplatz_1k_x.exr',
 		format: '.exr',
 	},
 	{

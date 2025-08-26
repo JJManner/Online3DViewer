@@ -5,7 +5,7 @@ import { CreateHighlightMaterials, ShadingType } from '../threejs/threeutils.js'
 import { Camera, NavigationMode, ProjectionMode } from './camera.js';
 import { GetDomElementInnerDimensions } from './domutils.js';
 import { Navigation } from './navigation.js';
-import { ShadingModel } from './shadingmodel.js';
+//import { ShadingModel } from './shadingmodel.js';
 import { ViewerModel, ViewerMainModel } from './viewermodel.js';
 
 import * as THREE from 'three';
@@ -210,7 +210,7 @@ export class Viewer
         this.camera = null;
         this.projectionMode = null;
         this.cameraValidator = null;
-        this.shadingModel = null;
+        //this.shadingModel = null;
         this.navigation = null;
         this.upVector = null;
         this.settings = {
@@ -227,7 +227,7 @@ export class Viewer
                 wireframe: true,
                 toneMapping: LinearToneMapping,
         }
-
+        this.updateEnvironment();
 
 
     }
@@ -412,7 +412,7 @@ export class Viewer
     SetEnvironmentMapSettings ()
     {
 
-        this.shadingModel.UpdateShading ();
+        //this.shadingModel.UpdateShading ();
         this.Render ();
     }
 
@@ -465,7 +465,7 @@ export class Viewer
         this.scene.add (this.camera);
 
         this.projectionMode = projectionMode;
-        this.shadingModel.SetProjectionMode (projectionMode);
+        //this.shadingModel.SetProjectionMode (projectionMode);
         this.cameraValidator.ForceUpdate ();
 
         this.AdjustClippingPlanes ();
@@ -592,7 +592,7 @@ export class Viewer
             }
         }
 
-        this.shadingModel.UpdateByCamera (navigationCamera);
+        //this.shadingModel.UpdateByCamera (navigationCamera);
         this.renderer.render (this.scene, this.camera);
     }
 
@@ -600,7 +600,7 @@ export class Viewer
     {
         const shadingType = GetShadingTypeOfObject (object);
         this.mainModel.SetMainObject (object);
-        this.shadingModel.SetShadingType (shadingType);
+        //this.shadingModel.SetShadingType (shadingType);
 
         this.Render ();
     }
@@ -718,12 +718,12 @@ export class Viewer
 
     InitShading  ()
     {
-        this.shadingModel = new ShadingModel (this.scene);
+        //this.shadingModel = new ShadingModel (this.scene);
     }
 
     GetShadingType ()
     {
-        return this.shadingModel.type;
+        //return this.shadingModel.type;
     }
 
     GetImageSize ()
