@@ -50,7 +50,7 @@ import {
 
 export function GetDefaultCamera (direction)
 {
-    let fieldOfView = 45.0;
+    let fieldOfView = 60.0;
     if (direction === Direction.X) {
         return new Camera (
             new Coord3D (2.0, -3.0, 1.5),
@@ -226,8 +226,9 @@ export class Viewer
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
                 toneMapping: LinearToneMapping,
+                bgRotation: 0,
         }
-        this.updateEnvironment();
+
 
 
     }
@@ -263,14 +264,17 @@ export class Viewer
 		this.pmremGenerator.compileEquirectangularShader();
 
         //const fov = Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
-        const fov = Viewer.options === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
+        //const fov = Viewer.options === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
         this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
 
-        console.log('1. is envmap undefined = ',  typeof envMap == 'undefined'),
+        this.updateLights();
+        this.updateEnvironment();
+
+
+        //console.log('Is fov undefined = ',  typeof fov == 'undefined'),
+        //console.log(fov),
 
         this.Render ();
-
-
 
     }
 
@@ -291,7 +295,7 @@ export class Viewer
 		});
 	}
 
-    	getCubeMapTexture(environment) {
+    getCubeMapTexture(environment) {
 		const { id, path } = environment;
 
 		// neutral (THREE.RoomEnvironment)
@@ -313,6 +317,7 @@ export class Viewer
 
 					resolve({ envMap });
 				},
+                console.log('Is envmap undefined = ',  typeof envMap == 'undefined'),
 				undefined,
 				reject,
 			);
@@ -384,7 +389,26 @@ export class Viewer
 		});
 	}
 
+	updateLights() {
+		const state = this.state;
+		const lights = this.lights;
 
+		/*if (state.punctualLights && !lights.length) {
+			this.addLights();
+		} else if (!state.punctualLights && lights.length) {
+			this.removeLights();
+		}*/
+
+		this.renderer.toneMapping = Number(state.toneMapping);
+		this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
+
+		/*if (lights.length === 2) {
+			lights[0].intensity = state.ambientIntensity;
+			lights[0].color.set(state.ambientColor);
+			lights[1].intensity = state.directIntensity;
+			lights[1].color.set(state.directColor);
+		}*/
+	}
 
 
     SetMouseClickHandler (onMouseClick)
@@ -413,6 +437,30 @@ export class Viewer
     {
 
         //this.shadingModel.UpdateShading ();
+
+               /*if (this.type === ShadingType.Phong) {
+            this.ambientLight.color.set (0x888888);
+            this.directionalLight.color.set (0x888888);
+            this.scene.environment = null;
+        } else */ if (this.type === ShadingType.Physical) {
+            //this.ambientLight.color.set (0x000000);
+            //this.directionalLight.color.set (0x555555);
+            //this.scene.environment = this.environment;
+            //this.renderer.toneMapping = Number(this.state.toneMapping);
+		    //this.renderer.toneMappingExposure = Math.pow(2, this.state.exposure);
+            this.scene.environment = this.envMap;
+            //console.log('Physical');
+            //console.log(this.state.exposure);
+            //console.log('envmap - ', this.envMap);
+            //console.log('shading type - ', ShadingType.Physical);
+
+        }
+        if (this.backgroundIsEnvMap && this.projectionMode === ProjectionMode.Perspective) {
+            //this.scene.background = this.environment;
+            this.scene.background = this.envMap;
+        } else {
+            this.scene.background = null;
+        }
         this.Render ();
     }
 
@@ -566,6 +614,7 @@ export class Viewer
 
     Render ()
     {
+
         let navigationCamera = this.navigation.GetCamera ();
 
         this.camera.position.set (navigationCamera.eye.x, navigationCamera.eye.y, navigationCamera.eye.z);
@@ -598,7 +647,7 @@ export class Viewer
 
     SetMainObject (object)
     {
-        const shadingType = GetShadingTypeOfObject (object);
+        //const shadingType = GetShadingTypeOfObject (object);
         this.mainModel.SetMainObject (object);
         //this.shadingModel.SetShadingType (shadingType);
 

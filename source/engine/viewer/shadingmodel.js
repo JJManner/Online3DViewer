@@ -1,6 +1,6 @@
 //import { SubCoord3D } from '../geometry/coord3d.js';
 import { ProjectionMode } from '../viewer/camera.js';
-import { ShadingType } from '../threejs/threeutils.js';
+//import { ShadingType } from '../threejs/threeutils.js';
 
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
