@@ -201,7 +201,7 @@ export class Viewer
 
         THREE.ColorManagement.enabled = false;
 
-        this.canvas = null;
+        //this.canvas = null;
         this.renderer = null;
         //this.scene = null;
         this.scene = new Scene();
@@ -221,7 +221,7 @@ export class Viewer
                 environment:
 				options === Preset.ASSET_GENERATOR
 					? environments.find((e) => e.id === 'footprint-court').name
-					: environments[2].name, // this defines the environment used, no 2 is the Clear Sky
+					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky
 
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
@@ -291,7 +291,9 @@ export class Viewer
 			this.scene.backgroundRotation.y = this.state.bgRotation * (Math.PI/180);
 			this.scene.environmentRotation.y = this.state.bgRotation * (Math.PI/180);
 			// NOTE! both of these are required (scene.backgroundRotation AND scene.environmentRotation) Otherwise lighting environemnt is not correct. Instructions on this matter - https://threejs.org/docs/#api/en/scenes/Scene.environmentRotation - are a really misleading.
-			this.scene.background = this.state.background ? envMap : this.backgroundColor;
+			this.scene.background = envMap;
+            console.log('Is envmap undefined = ',  typeof envMap == 'undefined');
+            // ? envMap : this.bgColor;
 		});
 	}
 
@@ -317,7 +319,6 @@ export class Viewer
 
 					resolve({ envMap });
 				},
-                console.log('Is envmap undefined = ',  typeof envMap == 'undefined'),
 				undefined,
 				reject,
 			);
@@ -647,7 +648,7 @@ export class Viewer
 
     SetMainObject (object)
     {
-        //const shadingType = GetShadingTypeOfObject (object);
+        const shadingType = GetShadingTypeOfObject (object);
         this.mainModel.SetMainObject (object);
         //this.shadingModel.SetShadingType (shadingType);
 
