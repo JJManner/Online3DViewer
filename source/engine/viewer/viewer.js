@@ -221,7 +221,7 @@ export class Viewer
                 environment:
 				options === Preset.ASSET_GENERATOR
 					? environments.find((e) => e.id === 'footprint-court').name
-					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky
+					: environments[2].name, // this defines the environment used, no 2 is the Clear Sky
 
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
