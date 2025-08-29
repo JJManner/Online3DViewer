@@ -226,12 +226,34 @@ export class Viewer
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
                 toneMapping: LinearToneMapping,
+                //toneMapping: ACESFilmicToneMapping,
                 bgRotation: 0,
         }
 
 
 
     }
+    updateLights() {
+		const state = this.state;
+		const lights = this.lights;
+
+		/*if (state.punctualLights && !lights.length) {
+			this.addLights();
+		} else if (!state.punctualLights && lights.length) {
+			this.removeLights();
+		}*/
+
+		this.renderer.toneMapping = Number(state.toneMapping);
+		this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
+
+
+		/*if (lights.length === 2) {
+			lights[0].intensity = state.ambientIntensity;
+			lights[0].color.set(state.ambientColor);
+			lights[1].intensity = state.directIntensity;
+			lights[1].color.set(state.directColor);
+		}*/
+	}
 
     Init (canvas)
     {
@@ -245,6 +267,10 @@ export class Viewer
 
         //this.renderer = window.renderer = new WebGLRenderer({ antialias: true });
         this.renderer = new WebGLRenderer (parameters);
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+
+        //texture.colorSpace = THREE.SRGBColorSpace;
+
         //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
         if (window.devicePixelRatio) {
@@ -291,7 +317,8 @@ export class Viewer
 			this.scene.backgroundRotation.y = this.state.bgRotation * (Math.PI/180);
 			this.scene.environmentRotation.y = this.state.bgRotation * (Math.PI/180);
 			// NOTE! both of these are required (scene.backgroundRotation AND scene.environmentRotation) Otherwise lighting environemnt is not correct. Instructions on this matter - https://threejs.org/docs/#api/en/scenes/Scene.environmentRotation - are a really misleading.
-			this.scene.background = envMap;
+
+            this.scene.background = envMap;
             console.log('Is envmap undefined = ',  typeof envMap == 'undefined');
             // ? envMap : this.bgColor;
 		});
@@ -390,26 +417,7 @@ export class Viewer
 		});
 	}
 
-	updateLights() {
-		const state = this.state;
-		const lights = this.lights;
 
-		/*if (state.punctualLights && !lights.length) {
-			this.addLights();
-		} else if (!state.punctualLights && lights.length) {
-			this.removeLights();
-		}*/
-
-		this.renderer.toneMapping = Number(state.toneMapping);
-		this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
-
-		/*if (lights.length === 2) {
-			lights[0].intensity = state.ambientIntensity;
-			lights[0].color.set(state.ambientColor);
-			lights[1].intensity = state.directIntensity;
-			lights[1].color.set(state.directColor);
-		}*/
-	}
 
 
     SetMouseClickHandler (onMouseClick)

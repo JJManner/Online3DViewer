@@ -150,7 +150,8 @@ export class ThreeMaterialHandler
 			opacity : material.opacity,
 			transparent : material.transparent,
 			alphaTest : material.alphaTest,
-			side : THREE.DoubleSide
+			side : THREE.DoubleSide,
+			//space : THREE.SRGBColorSpace
 		};
 
 		if (this.conversionParams.forceMediumpForMaterials) {
