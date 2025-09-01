@@ -151,7 +151,6 @@ export class ThreeMaterialHandler
 			transparent : material.transparent,
 			alphaTest : material.alphaTest,
 			side : THREE.DoubleSide,
-			//space : THREE.SRGBColorSpace
 		};
 
 		if (this.conversionParams.forceMediumpForMaterials) {
@@ -194,6 +193,7 @@ export class ThreeMaterialHandler
 				threeMaterial.color.setRGB (1.0, 1.0, 1.0);
 			}
 			threeMaterial.map = threeTexture;
+			threeTexture.colorSpace = THREE.SRGBColorSpace; // this line is compulsory with sRGB colors, if EXR enviromnents are used.
 		});
 		this.LoadFaceTexture (threeMaterial, material.bumpMap, (threeTexture) => {
 			threeMaterial.bumpMap = threeTexture;

@@ -235,7 +235,7 @@ export class Viewer
     }
     updateLights() {
 		const state = this.state;
-		const lights = this.lights;
+		//const lights = this.lights;
 
 		/*if (state.punctualLights && !lights.length) {
 			this.addLights();
@@ -268,10 +268,9 @@ export class Viewer
         //this.renderer = window.renderer = new WebGLRenderer({ antialias: true });
         this.renderer = new WebGLRenderer (parameters);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
+        //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
         //texture.colorSpace = THREE.SRGBColorSpace;
-
-        //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
         if (window.devicePixelRatio) {
             this.renderer.setPixelRatio (window.devicePixelRatio);
@@ -445,32 +444,7 @@ export class Viewer
     SetEnvironmentMapSettings ()
     {
 
-        //this.shadingModel.UpdateShading ();
 
-               /*if (this.type === ShadingType.Phong) {
-            this.ambientLight.color.set (0x888888);
-            this.directionalLight.color.set (0x888888);
-            this.scene.environment = null;
-        } else */ if (this.type === ShadingType.Physical) {
-            //this.ambientLight.color.set (0x000000);
-            //this.directionalLight.color.set (0x555555);
-            //this.scene.environment = this.environment;
-            //this.renderer.toneMapping = Number(this.state.toneMapping);
-		    //this.renderer.toneMappingExposure = Math.pow(2, this.state.exposure);
-            this.scene.environment = this.envMap;
-            //console.log('Physical');
-            //console.log(this.state.exposure);
-            //console.log('envmap - ', this.envMap);
-            //console.log('shading type - ', ShadingType.Physical);
-
-        }
-        if (this.backgroundIsEnvMap && this.projectionMode === ProjectionMode.Perspective) {
-            //this.scene.background = this.environment;
-            this.scene.background = this.envMap;
-        } else {
-            this.scene.background = null;
-        }
-        this.Render ();
     }
 
     SetBackgroundColor (color)
