@@ -303,9 +303,6 @@ export class Viewer
 
     }
 
-
-
-
 	updateEnvironment() {
 		const environment = environments.filter(
 			(entry) => entry.name === this.state.environment,
@@ -318,9 +315,9 @@ export class Viewer
 			// NOTE! both of these are required (scene.backgroundRotation AND scene.environmentRotation) Otherwise lighting environemnt is not correct. Instructions on this matter - https://threejs.org/docs/#api/en/scenes/Scene.environmentRotation - are a really misleading.
 
             this.scene.background = envMap;
-            console.log('Is envmap undefined = ',  typeof envMap == 'undefined');
             // ? envMap : this.bgColor;
 		});
+        //this.Render ();
 	}
 
     getCubeMapTexture(environment) {
@@ -608,6 +605,7 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
+                this.updateEnvironment();
                 this.camera.updateProjectionMatrix ();
             }
         } else if (this.projectionMode === ProjectionMode.Orthographic) {
@@ -620,6 +618,7 @@ export class Viewer
                 this.camera.right = frustumHalfHeight * aspect;
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
+                this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
             }
         }
