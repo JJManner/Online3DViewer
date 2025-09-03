@@ -211,7 +211,8 @@ export class Viewer
         this.camera = null;
         this.projectionMode = null;
         this.cameraValidator = null;
-        this.shadingModel = null;
+        //this.shadingModel = null;
+        this.ShadingType = null;
         this.navigation = null;
         this.upVector = null;
         this.settings = {
@@ -249,13 +250,11 @@ export class Viewer
 			this.removeLights();
 		}*/
 
-        if (state.phongLights && !lights.length) {
+        if (this.ShadingType != 2) {
 			this.addLights();
-		} else if (!state.phongLights && lights.length) {
+		} else if (lights.length) {
 			this.removeLights();
-		}
-
-        if (this.bgIsEnvmap) {
+		} else  {
             this.renderer.toneMapping = Number(state.toneMapping);
             this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
             }
@@ -267,6 +266,7 @@ export class Viewer
 			lights[1].intensity = state.directIntensity;
 			lights[1].color.set(state.directColor);
 		}
+
 	}
 
     addLights() {
@@ -332,7 +332,8 @@ export class Viewer
         //const fov = Viewer.options === Preset.ASSET_GENERATOR ? (0.8 * 180) / Math.PI : 60;
         this.neutralEnvironment = this.pmremGenerator.fromScene(new RoomEnvironment()).texture;
 
-        this.updateLights();
+        this.removeLights ();
+
         this.updateEnvironment();
 
 
@@ -402,7 +403,7 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
-                this.state.phongLights = false;
+                //this.state.phongLights = false;
                 this.updateLights ();
                 this.scene.background = this.scene.environment;
                 this.camera.updateProjectionMatrix ();
@@ -417,7 +418,7 @@ export class Viewer
                 this.camera.right = frustumHalfHeight * aspect;
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
-                this.state.phongLights = true;
+                //this.state.phongLights = true;
                 this.updateLights ();
                 this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
@@ -493,8 +494,22 @@ export class Viewer
 		});
 	}
 
+    SetMainObject (object)
+    {
+        this.ShadingType = null;
+        const shadingType = GetShadingTypeOfObject (object);
+        this.ShadingType = shadingType;
+        this.mainModel.SetMainObject (object);
+        console.log('SHADINGTYPE from object = ', this.ShadingType);
+        if (this.ShadingType != 2) {
+            this.removeLights ();
+        }
+        //console.log('shadingtype from object = ', shadingType);
 
+        //this.shadingModel.SetShadingType (shadingType);
 
+        //this.Render ();
+    }
 
     SetMouseClickHandler (onMouseClick)
     {
@@ -669,15 +684,6 @@ export class Viewer
         let oldCamera = this.navigation.GetCamera ();
         let newCamera = this.upVector.Flip (oldCamera);
         this.navigation.MoveCamera (newCamera, 0);
-        this.Render ();
-    }
-
-    SetMainObject (object)
-    {
-        const shadingType = GetShadingTypeOfObject (object);
-        this.mainModel.SetMainObject (object);
-        //this.shadingModel.SetShadingType (shadingType);
-
         this.Render ();
     }
 
