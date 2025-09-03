@@ -348,6 +348,42 @@ export class Viewer
 		});
 	}
 
+    Render ()
+    {
+
+        let navigationCamera = this.navigation.GetCamera ();
+
+        this.camera.position.set (navigationCamera.eye.x, navigationCamera.eye.y, navigationCamera.eye.z);
+        this.camera.up.set (navigationCamera.up.x, navigationCamera.up.y, navigationCamera.up.z);
+        this.camera.lookAt (new THREE.Vector3 (navigationCamera.center.x, navigationCamera.center.y, navigationCamera.center.z));
+
+        if (this.projectionMode === ProjectionMode.Perspective) {
+            if (!this.cameraValidator.ValidatePerspective ()) {
+                this.camera.aspect = this.canvas.width / this.canvas.height;
+                this.camera.fov = navigationCamera.fov;
+                this.updateEnvironment();
+                this.scene.background = this.scene.environment;
+                this.camera.updateProjectionMatrix ();
+            }
+        } else if (this.projectionMode === ProjectionMode.Orthographic) {
+            let eyeCenterDistance = CoordDistance3D (navigationCamera.eye, navigationCamera.center);
+            if (!this.cameraValidator.ValidateOrthographic (eyeCenterDistance)) {
+                let aspect = this.canvas.width / this.canvas.height;
+                let eyeCenterDistance = CoordDistance3D (navigationCamera.eye, navigationCamera.center);
+                let frustumHalfHeight = eyeCenterDistance * Math.tan (0.5 * navigationCamera.fov * DegRad);
+                this.camera.left = -frustumHalfHeight * aspect;
+                this.camera.right = frustumHalfHeight * aspect;
+                this.camera.top = frustumHalfHeight;
+                this.camera.bottom = -frustumHalfHeight;
+                this.scene.background = this.bgColor;
+                this.camera.updateProjectionMatrix ();
+            }
+        }
+
+        //this.shadingModel.UpdateByCamera (navigationCamera);
+        this.renderer.render (this.scene, this.camera);
+    }
+
     load(url, rootPath, assetMap) {
 		const baseURL = LoaderUtils.extractUrlBase(url);
 
@@ -590,41 +626,6 @@ export class Viewer
         let newCamera = this.upVector.Flip (oldCamera);
         this.navigation.MoveCamera (newCamera, 0);
         this.Render ();
-    }
-
-    Render ()
-    {
-
-        let navigationCamera = this.navigation.GetCamera ();
-
-        this.camera.position.set (navigationCamera.eye.x, navigationCamera.eye.y, navigationCamera.eye.z);
-        this.camera.up.set (navigationCamera.up.x, navigationCamera.up.y, navigationCamera.up.z);
-        this.camera.lookAt (new THREE.Vector3 (navigationCamera.center.x, navigationCamera.center.y, navigationCamera.center.z));
-
-        if (this.projectionMode === ProjectionMode.Perspective) {
-            if (!this.cameraValidator.ValidatePerspective ()) {
-                this.camera.aspect = this.canvas.width / this.canvas.height;
-                this.camera.fov = navigationCamera.fov;
-                this.updateEnvironment();
-                this.camera.updateProjectionMatrix ();
-            }
-        } else if (this.projectionMode === ProjectionMode.Orthographic) {
-            let eyeCenterDistance = CoordDistance3D (navigationCamera.eye, navigationCamera.center);
-            if (!this.cameraValidator.ValidateOrthographic (eyeCenterDistance)) {
-                let aspect = this.canvas.width / this.canvas.height;
-                let eyeCenterDistance = CoordDistance3D (navigationCamera.eye, navigationCamera.center);
-                let frustumHalfHeight = eyeCenterDistance * Math.tan (0.5 * navigationCamera.fov * DegRad);
-                this.camera.left = -frustumHalfHeight * aspect;
-                this.camera.right = frustumHalfHeight * aspect;
-                this.camera.top = frustumHalfHeight;
-                this.camera.bottom = -frustumHalfHeight;
-                this.scene.background = this.bgColor;
-                this.camera.updateProjectionMatrix ();
-            }
-        }
-
-        //this.shadingModel.UpdateByCamera (navigationCamera);
-        this.renderer.render (this.scene, this.camera);
     }
 
     SetMainObject (object)
