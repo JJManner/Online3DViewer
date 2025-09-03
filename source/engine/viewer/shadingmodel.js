@@ -43,16 +43,16 @@ export class ShadingModel
     {
         this.scene = scene;
 
-        //this.type = ShadingType.Phong;
+        this.type = ShadingType.Phong;
         this.type = ShadingType.Physical;
         this.projectionMode = ProjectionMode.Perspective;
-       //this.ambientLight = new THREE.AmbientLight (0x888888, 1.0 * Math.PI);
-        //this.directionalLight = new THREE.DirectionalLight (0x888888, 1.0 * Math.PI);
+        this.ambientLight = new THREE.AmbientLight (0x888888, 1.0 * Math.PI);
+        this.directionalLight = new THREE.DirectionalLight (0x888888, 1.0 * Math.PI);
         this.environmentSettings = new EnvironmentSettings (null, false);
         this.environment = null;
 
-        //this.scene.add (this.ambientLight);
-        //this.scene.add (this.directionalLight);
+        this.scene.add (this.ambientLight);
+        this.scene.add (this.directionalLight);
     }
 
     SetShadingType (type)

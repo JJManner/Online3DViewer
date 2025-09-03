@@ -198,6 +198,7 @@ export class Viewer
     constructor (options)
     {
         this.options = options;
+        this.lights = [];
 
         THREE.ColorManagement.enabled = false;
 
@@ -210,13 +211,14 @@ export class Viewer
         this.camera = null;
         this.projectionMode = null;
         this.cameraValidator = null;
-        //this.shadingModel = null;
+        this.shadingModel = null;
         this.navigation = null;
         this.upVector = null;
         this.settings = {
             animationSteps : 40
         };
-                this.state = {
+
+        this.state = {
 
                 environment:
 				options === Preset.ASSET_GENERATOR
@@ -228,14 +230,18 @@ export class Viewer
                 toneMapping: LinearToneMapping,
                 //toneMapping: ACESFilmicToneMapping,
                 bgRotation: 0,
+                bgIsEnvmap: false,
+                phongLights: false,
+                ambientIntensity: 0.3,
+                ambientColor: '#FFFFFF',
+                directIntensity: 0.8 * Math.PI, // TODO(#116)
+                directColor: '#FFFFFF',
         }
-
-
-
     }
+
     updateLights() {
 		const state = this.state;
-		//const lights = this.lights;
+		const lights = this.lights;
 
 		/*if (state.punctualLights && !lights.length) {
 			this.addLights();
@@ -243,16 +249,52 @@ export class Viewer
 			this.removeLights();
 		}*/
 
-		this.renderer.toneMapping = Number(state.toneMapping);
-		this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
+        if (state.phongLights && !lights.length) {
+			this.addLights();
+		} else if (!state.phongLights && lights.length) {
+			this.removeLights();
+		}
+
+        if (this.bgIsEnvmap) {
+            this.renderer.toneMapping = Number(state.toneMapping);
+            this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
+            }
 
 
-		/*if (lights.length === 2) {
+		if (lights.length === 2) {
 			lights[0].intensity = state.ambientIntensity;
 			lights[0].color.set(state.ambientColor);
 			lights[1].intensity = state.directIntensity;
 			lights[1].color.set(state.directColor);
+		}
+	}
+
+    addLights() {
+		const state = this.state;
+
+		/*if (this.options === Preset.ASSET_GENERATOR) {
+			const hemiLight = new HemisphereLight();
+			hemiLight.name = 'hemi_light';
+			this.scene.add(hemiLight);
+			this.lights.push(hemiLight);
+			return;
 		}*/
+
+		const light1 = new AmbientLight(state.ambientColor, state.ambientIntensity);
+		light1.name = 'ambient_light';
+		this.camera.add(light1);
+
+		const light2 = new DirectionalLight(state.directColor, state.directIntensity);
+		light2.position.set(0.5, 0, 0.866); // ~60º
+		light2.name = 'main_light';
+		this.camera.add(light2);
+
+		this.lights.push(light1, light2);
+	}
+
+	removeLights() {
+		this.lights.forEach((light) => light.parent.remove(light));
+		this.lights.length = 0;
 	}
 
     Init (canvas)
@@ -269,8 +311,6 @@ export class Viewer
         this.renderer = new WebGLRenderer (parameters);
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         //this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-
-        //texture.colorSpace = THREE.SRGBColorSpace;
 
         if (window.devicePixelRatio) {
             this.renderer.setPixelRatio (window.devicePixelRatio);
@@ -339,7 +379,8 @@ export class Viewer
 				(texture) => {
 					const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
 					this.pmremGenerator.dispose();
-
+                    this.bgIsEnvmap = true;
+                    //console.log("bg is envmap = ", this.bgIsEnvmap);
 					resolve({ envMap });
 				},
 				undefined,
@@ -361,7 +402,8 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
-                this.updateEnvironment();
+                this.state.phongLights = false;
+                this.updateLights ();
                 this.scene.background = this.scene.environment;
                 this.camera.updateProjectionMatrix ();
             }
@@ -375,6 +417,8 @@ export class Viewer
                 this.camera.right = frustumHalfHeight * aspect;
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
+                this.state.phongLights = true;
+                this.updateLights ();
                 this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
             }
