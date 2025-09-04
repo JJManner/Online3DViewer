@@ -250,12 +250,11 @@ export class Viewer
 			this.removeLights();
 		}*/
 
-        if (this.ShadingType != 2) {
-			this.addLights();
-		} else if (lights.length) {
+        if (this.ShadingType === 1) {
+			if (!lights.length) this.addLights();
+		} else if (this.ShadingType === 2 && lights.length) {
 			this.removeLights();
-		} else  {
-            this.renderer.toneMapping = Number(state.toneMapping);
+		    this.renderer.toneMapping = Number(state.toneMapping);
             this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
             }
 
@@ -404,7 +403,7 @@ export class Viewer
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
                 //this.state.phongLights = false;
-                this.updateLights ();
+                //this.updateLights ();
                 this.scene.background = this.scene.environment;
                 this.camera.updateProjectionMatrix ();
             }
@@ -419,7 +418,7 @@ export class Viewer
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
                 //this.state.phongLights = true;
-                this.updateLights ();
+                //this.updateLights ();
                 this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
             }
@@ -501,9 +500,9 @@ export class Viewer
         this.ShadingType = shadingType;
         this.mainModel.SetMainObject (object);
         console.log('SHADINGTYPE from object = ', this.ShadingType);
-        if (this.ShadingType != 2) {
-            this.removeLights ();
-        }
+        if (this.ShadingType === 1)
+            this.updateLights (); else this.removeLights ();
+
         //console.log('shadingtype from object = ', shadingType);
 
         //this.shadingModel.SetShadingType (shadingType);
@@ -586,8 +585,9 @@ export class Viewer
 			this.camera = new THREE.OrthographicCamera (-1.0, 1.0, 1.0, -1.0, 0.1, 1000.0);
         }
         this.scene.add (this.camera);
-
+        this.addLights ();
         this.projectionMode = projectionMode;
+        this.updateLights ();
         //this.shadingModel.SetProjectionMode (projectionMode);
         this.cameraValidator.ForceUpdate ();
 
