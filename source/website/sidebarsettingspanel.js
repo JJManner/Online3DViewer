@@ -8,6 +8,7 @@ import { SidebarPanel } from './sidebarpanel.js';
 import { ShadingType } from '../engine/threejs/threeutils.js';
 import { ProjectionMode } from '../engine/viewer/camera.js';
 import { Loc } from '../engine/core/localization.js';
+import { environments } from '../engine/viewer/environments.js';
 
 import * as Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/monolith.min.css';
@@ -66,7 +67,7 @@ class EnvironmentMapPopup extends PopupDialog
         let envMapImages = [
             {
                 element: null,
-                name: 'fishermans_bastion'
+                name: ''
             },
             {
                 element: null,

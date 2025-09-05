@@ -250,9 +250,9 @@ export class Viewer
 			this.removeLights();
 		}*/
 
-        if (this.ShadingType === 1) {
+        if (this.ShadingType === ShadingType.Phong) {
 			if (!lights.length) this.addLights();
-		} else if (this.ShadingType === 2 && lights.length) {
+		} else if (this.ShadingType === ShadingType.Physical && lights.length) {
 			this.removeLights();
 		    this.renderer.toneMapping = Number(state.toneMapping);
             this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
@@ -496,7 +496,7 @@ export class Viewer
         this.ShadingType = shadingType;
         this.mainModel.SetMainObject (object);
         console.log('SHADINGTYPE from object = ', this.ShadingType);
-        if (this.ShadingType === 1)
+        if (this.ShadingType === ShadingType.Phong)
             this.updateLights (); else this.removeLights ();
 
         //console.log('shadingtype from object = ', shadingType);
