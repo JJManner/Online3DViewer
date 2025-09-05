@@ -8,7 +8,6 @@ import { SidebarPanel } from './sidebarpanel.js';
 import { ShadingType } from '../engine/threejs/threeutils.js';
 import { ProjectionMode } from '../engine/viewer/camera.js';
 import { Loc } from '../engine/core/localization.js';
-import { environments } from '../engine/viewer/environments.js';
 
 import * as Pickr from '@simonwep/pickr';
 import '@simonwep/pickr/dist/themes/monolith.min.css';
@@ -67,7 +66,7 @@ class EnvironmentMapPopup extends PopupDialog
         let envMapImages = [
             {
                 element: null,
-                name: ''
+                name: 'fishermans_bastion'
             },
             {
                 element: null,
@@ -91,7 +90,7 @@ class EnvironmentMapPopup extends PopupDialog
             }
         ];
 
-        if (shadingType === ShadingType.Phong) {
+        /*if (shadingType === ShadingType.Phong) {
             envMapImages.unshift ({
                 element : null,
                 name : 'noimage'
@@ -123,7 +122,7 @@ class EnvironmentMapPopup extends PopupDialog
                     callbacks.onEnvironmentMapChanged ();
                 });
             }
-        } else if (shadingType === ShadingType.Physical) {
+        } else if (shadingType === ShadingType.Physical)*/ {
             let isPerspective = (callbacks.getProjectionMode () === ProjectionMode.Perspective);
             if (isPerspective) {
                 let checkboxDiv = AddDiv (contentDiv, 'ov_environment_map_checkbox');
@@ -305,7 +304,7 @@ class SettingsModelDisplaySection extends SettingsSection
 
     UpdateEnvironmentMap ()
     {
-        function UpdateImage (input, image)
+        /*function UpdateImage (input, image)
         {
             input.style.backgroundImage = 'url(\'assets/envmaps/' + image + '.jpg\')';
         }
@@ -321,7 +320,7 @@ class SettingsModelDisplaySection extends SettingsSection
         }
         if (this.environmentMapPbrDiv !== null) {
             UpdateImage (this.environmentMapPbrInput, this.settings.environmentMapName);
-        }
+        }*/
     }
 
     Update ()

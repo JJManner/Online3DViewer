@@ -30,6 +30,8 @@ import { EnvironmentSettings } from '../engine/viewer/shadingmodel.js';
 import { IntersectionMode } from '../engine/viewer/viewermodel.js';
 import { Loc } from '../engine/core/localization.js';
 
+import { environments } from '../engine/viewer/environments.js';
+
 const WebsiteUIState =
 {
     Undefined : 0,
@@ -557,16 +559,18 @@ export class Website
     UpdateEnvironmentMap ()
     {
         let envMapPath = 'assets/envmaps/' + this.settings.environmentMapName + '/';
-        let envMapTextures = [
+        let envMapTextures = [];/*
             envMapPath + 'posx.jpg',
             envMapPath + 'negx.jpg',
             envMapPath + 'posy.jpg',
             envMapPath + 'negy.jpg',
             envMapPath + 'posz.jpg',
             envMapPath + 'negz.jpg'
-        ];
-        let environmentSettings = new EnvironmentSettings (envMapTextures, this.settings.backgroundIsEnvMap);
+        ];*/
+        let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
         this.viewer.SetEnvironmentMapSettings (environmentSettings);
+        //this.viewer.state.bgIsEnvmap = false;
+        console.log('environmentSettings = ', environmentSettings);
     }
 
     SwitchTheme (newThemeId, resetColors)

@@ -528,9 +528,15 @@ export class Viewer
         this.Render ();
     }
 
-    SetEnvironmentMapSettings ()
+    SetEnvironmentMapSettings (environmentSettings)
     {
-
+        this.bgIsEnvmap = environmentSettings;
+        //let newEnvironmentSettings = environmentSettings.Clone ();
+        /*this.shadingModel.SetEnvironmentMapSettings (newEnvironmentSettings, () => {
+            this.Render ();
+        });
+        this.shadingModel.UpdateShading ();
+        this.Render ();*/
 
     }
 
