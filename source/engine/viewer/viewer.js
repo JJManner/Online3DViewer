@@ -402,8 +402,6 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
-                //this.state.phongLights = false;
-                //this.updateLights ();
                 this.scene.background = this.scene.environment;
                 this.camera.updateProjectionMatrix ();
             }
@@ -417,8 +415,6 @@ export class Viewer
                 this.camera.right = frustumHalfHeight * aspect;
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
-                //this.state.phongLights = true;
-                //this.updateLights ();
                 this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
             }
