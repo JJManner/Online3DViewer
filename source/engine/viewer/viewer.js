@@ -231,7 +231,7 @@ export class Viewer
                 toneMapping: LinearToneMapping,
                 //toneMapping: ACESFilmicToneMapping,
                 bgRotation: 0,
-                bgIsEnvmap: false,
+                bgIsEnvmap: true,
                 phongLights: false,
                 ambientIntensity: 0.3,
                 ambientColor: '#FFFFFF',
@@ -402,7 +402,7 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
-                this.scene.background = this.scene.environment;
+                if (this.state.bgIsEnvmap) this.scene.background = this.scene.environment; else this.scene.background = this.bgColor;
                 this.camera.updateProjectionMatrix ();
             }
         } else if (this.projectionMode === ProjectionMode.Orthographic) {
