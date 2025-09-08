@@ -16,8 +16,7 @@ export class Settings
     {
         this.themeId = themeId;
         this.environmentMapName = 'fishermans_bastion';
-        this.backgroundIsVisible;
-        this.backgroundIsEnvMap = false;
+        this.backgroundIsEnvMap = true;
         if (this.themeId === Theme.Light) {
             this.backgroundColor = new RGBAColor (255, 255, 255, 255);
             this.defaultLineColor = new RGBColor (100, 100, 100);

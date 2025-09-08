@@ -223,7 +223,7 @@ export class Viewer
 
                 environment:
 				options === Preset.ASSET_GENERATOR
-					? environments.find((e) => e.id === 'footprint-court').name
+					? environments.find((e) => e.id === 'test').name
 					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky
 
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
@@ -252,10 +252,12 @@ export class Viewer
 
         if (this.ShadingType === ShadingType.Phong) {
 			if (!lights.length) this.addLights();
-		} else if (this.ShadingType === ShadingType.Physical && lights.length) {
+		} else if (this.ShadingType === ShadingType.Physical) {
 			this.removeLights();
 		    this.renderer.toneMapping = Number(state.toneMapping);
             this.renderer.toneMappingExposure = Math.pow(2, state.exposure);
+            this.cameraValidator.ForceUpdate ();
+            this.Render ();
             }
 
 
@@ -265,6 +267,7 @@ export class Viewer
 			lights[1].intensity = state.directIntensity;
 			lights[1].color.set(state.directColor);
 		}
+        console.log('exposure = ', this.state.exposure);
 
 	}
 
@@ -339,6 +342,14 @@ export class Viewer
         //console.log('Is fov undefined = ',  typeof fov == 'undefined'),
         //console.log(fov),
 
+        for (let step = 1; step < 7; step++) {
+            console.log('environment ', step, ' = ',environments[step].name);
+            //console.log('environment ', step, ' = ',environments[step].path);
+            console.log('environment ', step, ' = ',environments[step].preview);
+
+
+        }
+
         this.Render ();
 
     }
@@ -347,6 +358,8 @@ export class Viewer
 		const environment = environments.filter(
 			(entry) => entry.name === this.state.environment,
 		)[0];
+
+        console.log('environment plain name  = ',this.state.environment);
 
 		this.getCubeMapTexture(environment).then(({ envMap }) => {
 			this.scene.environment = envMap;
@@ -497,7 +510,7 @@ export class Viewer
         this.mainModel.SetMainObject (object);
         console.log('SHADINGTYPE from object = ', this.ShadingType);
         if (this.ShadingType === ShadingType.Phong)
-            this.updateLights (); else this.removeLights ();
+            this.updateLights (); else {this.removeLights (); this.updateLights (); }
 
         //console.log('shadingtype from object = ', shadingType);
 

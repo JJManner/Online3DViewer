@@ -569,6 +569,9 @@ export class Website
         ];*/
         let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
         //this.viewer.SetEnvironmentMapSettings (environmentSettings);
+        //this.viewer.state.options.environment.environments[5];
+        this.viewer.updateEnvironment();
+
         if (this.settings.backgroundIsEnvMap)
             this.viewer.state.bgIsEnvmap = true;
             else {
