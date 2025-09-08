@@ -568,9 +568,18 @@ export class Website
             envMapPath + 'negz.jpg'
         ];*/
         let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
-        this.viewer.SetEnvironmentMapSettings (environmentSettings);
-        //this.viewer.state.bgIsEnvmap = false;
-        console.log('environmentSettings = ', environmentSettings);
+        //this.viewer.SetEnvironmentMapSettings (environmentSettings);
+        if (this.settings.backgroundIsEnvMap)
+            this.viewer.state.bgIsEnvmap = true;
+            else {
+                this.viewer.state.bgIsEnvmap = false;
+                this.viewer.scene.background = this.viewer.bgColor;
+            }
+        this.viewer.cameraValidator.ForceUpdate ();
+        this.viewer.Render();
+
+        console.log('settings.backgroundIsEnvMap = ', this.settings.backgroundIsVisible);
+        console.log('this.viewer.state.bgIsEnvmap = ', this.viewer.state.bgIsEnvmap);
     }
 
     SwitchTheme (newThemeId, resetColors)

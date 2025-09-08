@@ -530,7 +530,7 @@ export class Viewer
 
     SetEnvironmentMapSettings (environmentSettings)
     {
-        this.bgIsEnvmap = environmentSettings;
+        //this.bgIsEnvmap = environmentSettings;
         //let newEnvironmentSettings = environmentSettings.Clone ();
         /*this.shadingModel.SetEnvironmentMapSettings (newEnvironmentSettings, () => {
             this.Render ();
