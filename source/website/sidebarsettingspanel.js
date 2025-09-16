@@ -127,7 +127,6 @@ class EnvironmentMapPopup extends PopupDialog
             if (isPerspective) {
                 let checkboxDiv = AddDiv (contentDiv, 'ov_environment_map_checkbox');
                 let backgroundIsEnvMapCheckbox = AddCheckbox (checkboxDiv, 'use_as_background', 'Use as background image', settings.backgroundIsEnvMap, () => {
-                    //settings.backgroundIsEnvMap = backgroundIsEnvMapCheckbox.checked;
                     settings.backgroundIsEnvMap = backgroundIsEnvMapCheckbox.checked;
                     callbacks.onEnvironmentMapChanged ();
                 });
@@ -305,12 +304,12 @@ class SettingsModelDisplaySection extends SettingsSection
 
     UpdateEnvironmentMap ()
     {
-        /*function UpdateImage (input, image)
+        function UpdateImage (input, image)
         {
             input.style.backgroundImage = 'url(\'assets/envmaps/' + image + '.jpg\')';
         }
 
-        if (this.environmentMapPhongDiv !== null) {
+        /*if (this.environmentMapPhongDiv !== null) {
             if (this.settings.backgroundIsEnvMap) {
                 UpdateImage (this.environmentMapPhongInput, this.settings.environmentMapName);
                 this.environmentMapPhongInput.classList.remove ('ov_environment_map_preview_no_color');
@@ -318,10 +317,11 @@ class SettingsModelDisplaySection extends SettingsSection
                 this.environmentMapPhongInput.style.backgroundImage = null;
                 this.environmentMapPhongInput.classList.add ('ov_environment_map_preview_no_color');
             }
-        }
+        }*/
         if (this.environmentMapPbrDiv !== null) {
             UpdateImage (this.environmentMapPbrInput, this.settings.environmentMapName);
-        }*/
+            console.log('this.settings.environmentMapName = ', this.settings.environmentMapName);
+        }
     }
 
     Update ()

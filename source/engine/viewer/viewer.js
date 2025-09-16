@@ -14,14 +14,14 @@ import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { environments } from './environments.js';
+//import { environments } from './environments.js';
 
 const MANAGER = new LoadingManager();
 const THREE_PATH = `https://unpkg.com/three@0.${REVISION}.x`;
 const KTX2_LOADER = new KTX2Loader(MANAGER).setTranscoderPath(
     `${THREE_PATH}/examples/jsm/libs/basis/`,
 );
-const Preset = { ASSET_GENERATOR: 'assetgenerator' };
+//const Preset = { ASSET_GENERATOR: 'assetgenerator' };
 
 import {
 	AmbientLight,
@@ -199,6 +199,7 @@ export class Viewer
     {
         this.options = options;
         this.lights = [];
+        this.environmentMapPath = 'neutral';
 
         THREE.ColorManagement.enabled = false;
 
@@ -221,10 +222,10 @@ export class Viewer
 
         this.state = {
 
-                environment:
-				options === Preset.ASSET_GENERATOR
+                environment: null,
+				/*options === Preset.ASSET_GENERATOR
 					? environments.find((e) => e.id === 'test').name
-					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky
+					: environments[5].name, // this defines the environment used, no 2 is the Clear Sky */
 
                 exposure: 0, // this exposure varies by the model, THIS VALUE should be included in the opening link
                 wireframe: true,
@@ -342,24 +343,28 @@ export class Viewer
         //console.log('Is fov undefined = ',  typeof fov == 'undefined'),
         //console.log(fov),
 
-        for (let step = 1; step < 7; step++) {
+        /*for (let step = 1; step < 7; step++) {
             console.log('environment ', step, ' = ',environments[step].name);
             //console.log('environment ', step, ' = ',environments[step].path);
             console.log('environment ', step, ' = ',environments[step].preview);
 
 
-        }
+        }*/
 
         this.Render ();
 
     }
 
 	updateEnvironment() {
-		const environment = environments.filter(
-			(entry) => entry.name === this.state.environment,
-		)[0];
 
-        console.log('environment plain name  = ',this.state.environment);
+		/*const environment = environments.filter(
+			(entry) => entry.name === this.state.environment,
+		)[0];*/
+
+        const environment = this.environmentMapPath;
+
+
+        console.log('environment plain name VIEWER = ',this.environmentMapPath);
 
 		this.getCubeMapTexture(environment).then(({ envMap }) => {
 			this.scene.environment = envMap;
@@ -374,21 +379,22 @@ export class Viewer
 	}
 
     getCubeMapTexture(environment) {
-		const { id, path } = environment;
+		//const { id, path } = environment;
+         let envMapPath = 'assets/envmaps/' + this.environmentMapPath + '.exr';
 
 		// neutral (THREE.RoomEnvironment)
-		if (id === 'neutral') {
+		if (this.environmentMapPath === 'neutral') {
 			return Promise.resolve({ envMap: this.neutralEnvironment });
 		}
 
 		// none
-		if (id === '') {
+		if (this.environmentMapPath === '') {
 			return Promise.resolve({ envMap: null });
 		}
 
 		return new Promise((resolve, reject) => {
 			new EXRLoader().load(
-				path,
+				envMapPath,
 				(texture) => {
 					const envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
 					this.pmremGenerator.dispose();

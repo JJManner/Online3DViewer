@@ -570,6 +570,8 @@ export class Website
         let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
         //this.viewer.SetEnvironmentMapSettings (environmentSettings);
         //this.viewer.state.options.environment.environments[5];
+
+        this.viewer.environmentMapPath = this.settings.environmentMapName;
         this.viewer.updateEnvironment();
 
         if (this.settings.backgroundIsEnvMap)
@@ -585,6 +587,7 @@ export class Website
 
         console.log('settings.backgroundIsEnvMap = ', this.settings.backgroundIsVisible);
         console.log('this.viewer.state.bgIsEnvmap = ', this.viewer.state.bgIsEnvmap);
+        //console.log('this.settings.environmentMapName = ', this.settings.environmentMapName);
     }
 
     SwitchTheme (newThemeId, resetColors)
