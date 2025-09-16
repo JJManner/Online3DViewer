@@ -66,27 +66,27 @@ class EnvironmentMapPopup extends PopupDialog
         let envMapImages = [
             {
                 element: null,
-                name: 'fishermans_bastion'
+                name: 'neutral'
             },
             {
                 element: null,
-                name: 'citadella'
+                name: 'drakensberg_solitary_mountain_puresky_1k'
             },
             {
                 element: null,
-                name: 'maskonaive'
+                name: 'kloofendal_48d_partly_cloudy_puresky_1k'
             },
             {
                 element: null,
-                name: 'teide'
+                name: 'venice_sunset_1k_x'
             },
             {
                 element: null,
-                name: 'ice_river'
+                name: 'hansaplatz_1k_x'
             },
             {
                 element: null,
-                name: 'park'
+                name: 'ulmer_muenster_1k'
             }
         ];
 
