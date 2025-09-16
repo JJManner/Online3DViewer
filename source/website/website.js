@@ -578,7 +578,9 @@ export class Website
                 this.viewer.state.bgIsEnvmap = false;
                 this.viewer.scene.background = this.viewer.bgColor;
             }
-        this.viewer.cameraValidator.ForceUpdate ();
+               this.viewer.updateEnvironment();
+
+            this.viewer.cameraValidator.ForceUpdate ();
         this.viewer.Render();
 
         console.log('settings.backgroundIsEnvMap = ', this.settings.backgroundIsVisible);

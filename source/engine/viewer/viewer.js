@@ -415,8 +415,6 @@ export class Viewer
             if (!this.cameraValidator.ValidatePerspective ()) {
                 this.camera.aspect = this.canvas.width / this.canvas.height;
                 this.camera.fov = navigationCamera.fov;
-                if (this.state.bgIsEnvmap) this.scene.background = this.scene.environment; else this.scene.background = this.bgColor;
-                this.camera.updateProjectionMatrix ();
             }
         } else if (this.projectionMode === ProjectionMode.Orthographic) {
             let eyeCenterDistance = CoordDistance3D (navigationCamera.eye, navigationCamera.center);
@@ -429,9 +427,12 @@ export class Viewer
                 this.camera.top = frustumHalfHeight;
                 this.camera.bottom = -frustumHalfHeight;
                 this.scene.background = this.bgColor;
-                this.camera.updateProjectionMatrix ();
+
             }
         }
+        if (this.state.bgIsEnvmap && this.projectionMode != ProjectionMode.Orthographic) this.scene.background = this.scene.environment; else this.scene.background = this.bgColor;
+
+        this.camera.updateProjectionMatrix ();
 
         //this.shadingModel.UpdateByCamera (navigationCamera);
         this.renderer.render (this.scene, this.camera);
