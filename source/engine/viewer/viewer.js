@@ -380,7 +380,7 @@ export class Viewer
 
     getCubeMapTexture(environment) {
 		//const { id, path } = environment;
-         let envMapPath = 'assets/envmaps/' + this.environmentMapPath + '.exr';
+        let envMapPath = 'assets/envmaps/' + this.environmentMapPath + '.exr';
 
 		// neutral (THREE.RoomEnvironment)
 		if (this.environmentMapPath === 'neutral') {

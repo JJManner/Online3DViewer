@@ -558,8 +558,8 @@ export class Website
 
     UpdateEnvironmentMap ()
     {
-        let envMapPath = 'assets/envmaps/' + this.settings.environmentMapName + '/';
-        let envMapTextures = [];/*
+        /*let envMapPath = 'assets/envmaps/' + this.settings.environmentMapName + '/';
+        let envMapTextures = [];
             envMapPath + 'posx.jpg',
             envMapPath + 'negx.jpg',
             envMapPath + 'posy.jpg',
@@ -567,25 +567,26 @@ export class Website
             envMapPath + 'posz.jpg',
             envMapPath + 'negz.jpg'
         ];*/
-        let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
+        //let environmentSettings = new EnvironmentSettings (this.settings.backgroundIsEnvMap);
         //this.viewer.SetEnvironmentMapSettings (environmentSettings);
         //this.viewer.state.options.environment.environments[5];
 
-        this.viewer.environmentMapPath = this.settings.environmentMapName;
-        this.viewer.updateEnvironment();
 
-        if (this.settings.backgroundIsEnvMap)
+        this.viewer.environmentMapPath = this.settings.environmentMapName;
+        this.viewer.updateEnvironment ();
+
+
+        if (this.settings.backgroundIsEnvMap) {
             this.viewer.state.bgIsEnvmap = true;
+            }
             else {
                 this.viewer.state.bgIsEnvmap = false;
                 this.viewer.scene.background = this.viewer.bgColor;
             }
-               this.viewer.updateEnvironment();
 
-            this.viewer.cameraValidator.ForceUpdate ();
-        this.viewer.Render();
+        this.viewer.Render ();
 
-        console.log('settings.backgroundIsEnvMap = ', this.settings.backgroundIsVisible);
+        console.log('settings.backgroundIsEnvMap = ', this.settings.backgroundIsEnvMap);
         console.log('this.viewer.state.bgIsEnvmap = ', this.viewer.state.bgIsEnvmap);
         //console.log('this.settings.environmentMapName = ', this.settings.environmentMapName);
     }

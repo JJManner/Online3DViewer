@@ -126,7 +126,7 @@ class EnvironmentMapPopup extends PopupDialog
             let isPerspective = (callbacks.getProjectionMode () === ProjectionMode.Perspective);
             if (isPerspective) {
                 let checkboxDiv = AddDiv (contentDiv, 'ov_environment_map_checkbox');
-                let backgroundIsEnvMapCheckbox = AddCheckbox (checkboxDiv, 'use_as_background', 'Use as background image', settings.backgroundIsEnvMap, () => {
+                let backgroundIsEnvMapCheckbox = AddCheckbox (checkboxDiv, 'use_as_background', 'Use as background image<br><br>Doubleclick image to change background', settings.backgroundIsEnvMap, () => {
                     settings.backgroundIsEnvMap = backgroundIsEnvMapCheckbox.checked;
                     callbacks.onEnvironmentMapChanged ();
                 });
@@ -142,7 +142,7 @@ class EnvironmentMapPopup extends PopupDialog
                     for (let otherImage of envMapImages) {
                         otherImage.element.classList.remove ('selected');
                     }
-                    envMapImage.element.classList.add ('selected');
+                    if (envMapImage.name === settings.environmentMapName) envMapImage.element.classList.add ('selected');
                     settings.environmentMapName = envMapImage.name;
                     callbacks.onEnvironmentMapChanged ();
                 });
@@ -238,7 +238,6 @@ class SettingsModelDisplaySection extends SettingsSection
                     return this.callbacks.getProjectionMode ();
                 },
                 onEnvironmentMapChanged : () => {
-                    this.UpdateEnvironmentMap ();
                     this.callbacks.onEnvironmentMapChanged ();
                 }
             });
@@ -254,13 +253,10 @@ class SettingsModelDisplaySection extends SettingsSection
                     return this.callbacks.getProjectionMode ();
                 },
                 onEnvironmentMapChanged : () => {
-                    this.UpdateEnvironmentMap ();
                     this.callbacks.onEnvironmentMapChanged ();
                 }
             });
         });
-
-        this.UpdateEnvironmentMap ();
 
         let edgeParameterDiv = AddDiv (this.contentDiv, 'ov_sidebar_parameter');
         this.edgeDisplayToggle = AddToggle (edgeParameterDiv, 'ov_sidebar_parameter_toggle');
@@ -320,6 +316,7 @@ class SettingsModelDisplaySection extends SettingsSection
         }*/
         if (this.environmentMapPbrDiv !== null) {
             UpdateImage (this.environmentMapPbrInput, this.settings.environmentMapName);
+
             console.log('this.settings.environmentMapName = ', this.settings.environmentMapName);
         }
     }
