@@ -145,6 +145,9 @@ class EnvironmentMapPopup extends PopupDialog
                     if (envMapImage.name === settings.environmentMapName) envMapImage.element.classList.add ('selected');
                     settings.environmentMapName = envMapImage.name;
                     callbacks.onEnvironmentMapChanged ();
+                    console.log('envMapImage.name = ',envMapImage.name)
+                    console.log('settings.environmentMapName = ',settings.environmentMapName);
+                    console.log('',)
                 });
             }
         }
